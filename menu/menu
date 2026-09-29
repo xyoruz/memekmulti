@@ -1,74 +1,17 @@
 #!/bin/bash
+# menu/menu - menu utama (router). Isi tiap menu ada di file terpisah:
+#   vmess.sh  vless.sh  trojan.sh  utility.sh
 . /usr/local/lib/xm/lib.sh
 L=/usr/local/lib/xm
 
-# ---------- submenu akun (VMess / VLESS / Trojan) ----------
-account_menu(){
-  local p=$1
-  while true; do
-    header "MENU ${p^^}  |  $DOMAIN"
-    echo " 1) Buat akun"
-    echo " 2) Daftar akun"
-    echo " 3) Lihat detail / link akun"
-    echo " 4) Perpanjang akun"
-    echo " 5) Ubah limit IP & kuota"
-    echo " 6) Reset pemakaian / buka kunci"
-    echo " 7) Hapus akun"
-    echo " 0) Kembali"
-    line; read -rp "Pilih: " c
-    case $c in
-      1) bash $L/add.sh "$p" ;;
-      2) bash $L/list.sh "$p" ;;
-      3) bash $L/show.sh "$p" ;;
-      4) bash $L/renew.sh "$p" ;;
-      5) bash $L/limit.sh "$p" ;;
-      6) bash $L/reset.sh "$p" ;;
-      7) bash $L/del.sh "$p" ;;
-      0) return ;;
-    esac
-  done
+run_mod(){ # nama-file
+  if [[ -f $L/$1 ]]; then
+    bash "$L/$1"
+  else
+    err "Modul $1 belum terpasang. Jalankan: xm-update"; pause
+  fi
 }
 
-# ---------- fungsi utility ----------
-renew_ssl(){
-  header "PERBARUI SSL"
-  ~/.acme.sh/acme.sh --renew -d "$DOMAIN" --ecc --force && ok "SSL diperbarui." || err "Gagal memperbarui SSL."
-  pause
-}
-
-restart_all(){
-  header "RESTART LAYANAN"
-  systemctl restart xray nginx && ok "Xray & Nginx di-restart." || err "Gagal restart."
-  pause
-}
-
-# ---------- submenu utility ----------
-utility_menu(){
-  while true; do
-    header "UTILITY  |  $DOMAIN"
-    echo " 1) Info server & layanan"
-    echo " 2) Hapus akun expired sekarang"
-    echo " 3) Perbarui SSL"
-    echo " 4) Restart layanan"
-    echo " 5) Ganti domain"
-    echo " 6) Bot Telegram"
-    echo " 7) Update script dari GitHub"
-    echo " 0) Kembali"
-    line; read -rp "Pilih: " c
-    case $c in
-      1) bash $L/info.sh ;;
-      2) bash $L/expire.sh; pause ;;
-      3) renew_ssl ;;
-      4) restart_all ;;
-      5) bash $L/domain.sh ;;
-      6) bash $L/bot/setup.sh ;;
-      7) bash $L/update.sh; pause ;;
-      0) return ;;
-    esac
-  done
-}
-
-# ---------- menu utama ----------
 while true; do
   header "XRAY MANAGER  |  $DOMAIN"
   echo " 1) VMess    (buat & kelola akun)"
@@ -78,10 +21,10 @@ while true; do
   echo " 0) Keluar"
   line; read -rp "Pilih: " c
   case $c in
-    1) account_menu vmess ;;
-    2) account_menu vless ;;
-    3) account_menu trojan ;;
-    4) utility_menu ;;
+    1) run_mod vmess.sh ;;
+    2) run_mod vless.sh ;;
+    3) run_mod trojan.sh ;;
+    4) run_mod utility.sh ;;
     0) clear; exit 0 ;;
   esac
 done
