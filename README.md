@@ -54,7 +54,11 @@ update.sh           updater (perintah: xm-update)
 config/xray.json    konfigurasi dasar Xray
 menu/               menu & manajemen akun (VPS)
 ├── lib.sh          fungsi bersama (dipakai menu & bot)
-├── menu            menu utama
+├── menu            menu utama (router)
+├── vmess.sh        menu VMess  (buat, daftar, detail, perpanjang, limit, reset, hapus)
+├── vless.sh        menu VLESS  (sama)
+├── trojan.sh       menu Trojan (sama)
+├── utility.sh      menu Utility (info, expired, SSL, restart, domain, bot, update)
 ├── add.sh          buat akun
 ├── list.sh         daftar akun
 ├── show.sh         detail & link akun

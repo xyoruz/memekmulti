@@ -18,7 +18,7 @@ XM_DIR=/etc/xray-manager
 LIB_DIR=/usr/local/lib/xm
 CFG=/usr/local/etc/xray/config.json
 XRAY_BIN=/usr/local/bin/xray
-MENU_FILES="lib.sh add.sh list.sh show.sh renew.sh del.sh expire.sh info.sh limit.sh reset.sh domain.sh limiter.sh menu"
+MENU_FILES="lib.sh add.sh list.sh show.sh renew.sh del.sh expire.sh info.sh limit.sh reset.sh domain.sh limiter.sh vmess.sh vless.sh trojan.sh utility.sh menu"
 EXTRA_FILES="system.sh dropbear.sh vnstat.sh fail2ban.sh logclean.sh"
 BOT_FILES="bot.sh setup.sh lib/core.sh lib/keyboard.sh lib/validate.sh cmd/help.sh cmd/add.sh cmd/del.sh cmd/renew.sh cmd/limit.sh cmd/reset.sh cmd/detail.sh cmd/list.sh cmd/info.sh cmd/expire.sh cmd/restart.sh handler/text.sh handler/callback.sh handler/update.sh setup/config.sh setup/service.sh setup/test.sh setup/notify.sh setup/remove.sh"
 

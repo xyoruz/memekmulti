@@ -175,7 +175,7 @@ nginx -t || die "Konfigurasi Nginx tidak valid."
 step 8 "Memasang modul menu & manajemen akun..."
 mkdir -p "$LIB_DIR"
 
-MENU_FILES="lib.sh add.sh list.sh show.sh renew.sh del.sh expire.sh info.sh limit.sh reset.sh domain.sh limiter.sh menu"
+MENU_FILES="lib.sh add.sh list.sh show.sh renew.sh del.sh expire.sh info.sh limit.sh reset.sh domain.sh limiter.sh vmess.sh vless.sh trojan.sh utility.sh menu"
 BOT_FILES="bot.sh setup.sh lib/core.sh lib/keyboard.sh lib/validate.sh cmd/help.sh cmd/add.sh cmd/del.sh cmd/renew.sh cmd/limit.sh cmd/reset.sh cmd/detail.sh cmd/list.sh cmd/info.sh cmd/expire.sh cmd/restart.sh handler/text.sh handler/callback.sh handler/update.sh setup/config.sh setup/service.sh setup/test.sh setup/notify.sh setup/remove.sh"
 for f in $MENU_FILES; do
   fetch "menu/$f" "$LIB_DIR/$f"
