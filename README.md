@@ -11,7 +11,7 @@ dengan menu manajemen akun (masa aktif, limit IP, limit kuota) dan ganti domain.
 Ganti `USER` dan `REPO`, dan isi `REPO_RAW` di bagian atas `multiport.sh` dan `update.sh`.
 
 ```bash
-wget -O multiport.sh https://raw.githubusercontent.com/USER/REPO/main/multiport.sh && bash multiport.sh
+wget -O multiport.sh https://raw.githubusercontent.com/xyoruz/memekmulti/main/multiport.sh && bash multiport.sh
 ```
 
 Setelah selesai ketik `menu`.
