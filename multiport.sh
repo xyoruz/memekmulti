@@ -8,7 +8,7 @@
 
 R='\033[0;31m'; G='\033[0;32m'; Y='\033[0;33m'; C='\033[0;36m'; N='\033[0m'
 die(){ echo -e "${R}Error: $*${N}"; exit 1; }
-step(){ echo -e "${Y}[$1/9] $2${N}"; }
+step(){ echo -e "${Y}[$1/10] $2${N}"; }
 
 [[ $EUID -eq 0 ]] || die "Jalankan sebagai root (sudo su)."
 . /etc/os-release 2>/dev/null
@@ -157,7 +157,7 @@ EOF
 } > /etc/nginx/conf.d/xray.conf
 nginx -t || die "Konfigurasi Nginx tidak valid."
 
-# ---------- 8. Modul menu & bot (dipisah per fungsi) ----------
+# ---------- 8. Modul menu (dipisah per fungsi) ----------
 step 8 "Memasang modul menu & manajemen akun..."
 mkdir -p "$LIB_DIR"
 
@@ -182,12 +182,24 @@ chmod 644 /etc/cron.d/xm-expire
 echo "* * * * * root /bin/bash $LIB_DIR/limiter.sh >/dev/null 2>&1" > /etc/cron.d/xm-limiter
 chmod 644 /etc/cron.d/xm-limiter
 
-# ---------- 9. Firewall & start ----------
-step 9 "Mengaktifkan firewall & layanan..."
+step 9 "Memasang komponen tambahan (zona waktu/swap/BBR, Dropbear, vnstat, Fail2ban, pembersih log)..."
+EXTRA_FILES="system.sh dropbear.sh vnstat.sh fail2ban.sh logclean.sh"
+mkdir -p "$LIB_DIR/extra"
+for f in $EXTRA_FILES; do
+  fetch "extra/$f" "$LIB_DIR/extra/$f"
+  chmod +x "$LIB_DIR/extra/$f"
+done
+for f in $EXTRA_FILES; do
+  bash "$LIB_DIR/extra/$f" || echo -e "${Y}Peringatan: extra/$f gagal, dilewati (bisa dijalankan ulang: bash $LIB_DIR/extra/$f).${N}"
+done
+
+# ---------- 10. Firewall & start ----------
+step 10 "Mengaktifkan firewall & layanan..."
 SSH_PORT=$(ss -tnlp 2>/dev/null | awk '/sshd/{n=split($4,a,":"); print a[n]; exit}')
 SSH_PORT=${SSH_PORT:-22}
 ufw allow "${SSH_PORT}/tcp" >/dev/null 2>&1
 ufw allow 80,8080,8880,2086,443,8443/tcp >/dev/null 2>&1
+grep -q "^DROPBEAR_PORT=109" /etc/default/dropbear 2>/dev/null && ufw allow 109,143/tcp >/dev/null 2>&1
 ufw --force enable >/dev/null 2>&1
 
 systemctl daemon-reload
@@ -208,6 +220,7 @@ echo "Domain      : $DOMAIN"
 echo "Port TLS    : 443, 8443"
 echo "Port nTLS   : 80, 8080, 8880, 2086"
 echo "Port SSH    : $SSH_PORT (diizinkan di firewall)"
+grep -q "^DROPBEAR_PORT=109" /etc/default/dropbear 2>/dev/null && echo "Dropbear    : 109, 143"
 echo
 echo -e "Ketik ${Y}menu${N} untuk membuat & mengelola akun."
 echo -e "Ketik ${Y}xm-update${N} untuk memperbarui script dari GitHub."

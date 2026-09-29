@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==========================================================
 #  Update Xray Manager (tanpa install ulang)
-#  - Memperbarui semua modul menu & bot dari repo GitHub
+#  - Memperbarui semua modul menu dari repo GitHub
 #  - Data akun, domain, sertifikat, dan config akun TIDAK diubah
 #  - Migrasi otomatis config lama agar mendukung kuota & limit IP
 #  Jalankan sebagai root:  bash update.sh   (atau perintah: xm-update)
@@ -19,6 +19,7 @@ LIB_DIR=/usr/local/lib/xm
 CFG=/usr/local/etc/xray/config.json
 XRAY_BIN=/usr/local/bin/xray
 MENU_FILES="lib.sh add.sh list.sh show.sh renew.sh del.sh expire.sh info.sh limit.sh reset.sh domain.sh limiter.sh menu"
+EXTRA_FILES="system.sh dropbear.sh vnstat.sh fail2ban.sh logclean.sh"
 BOT_FILES="bot.sh setup.sh lib/core.sh lib/keyboard.sh lib/validate.sh cmd/help.sh cmd/add.sh cmd/del.sh cmd/renew.sh cmd/limit.sh cmd/reset.sh cmd/detail.sh cmd/list.sh cmd/info.sh cmd/expire.sh cmd/restart.sh handler/text.sh handler/callback.sh handler/update.sh setup/config.sh setup/service.sh setup/test.sh setup/notify.sh setup/remove.sh"
 
 [[ $EUID -eq 0 ]] || die "Jalankan sebagai root."
@@ -42,7 +43,7 @@ echo -e "${C}== Update Xray Manager ==${N}"
 
 # 1. Unduh ke folder sementara & validasi dulu
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
-mkdir -p "$tmp/bot/lib" "$tmp/bot/cmd" "$tmp/bot/handler" "$tmp/bot/setup"
+mkdir -p "$tmp/bot/lib" "$tmp/bot/cmd" "$tmp/bot/handler" "$tmp/bot/setup" "$tmp/extra"
 for f in $MENU_FILES; do
   fetch "menu/$f" "$tmp/$f"
   [[ -s "$tmp/$f" ]] || die "File menu/$f kosong."
@@ -52,6 +53,11 @@ for f in $BOT_FILES; do
   fetch "bot/$f" "$tmp/bot/$f"
   [[ -s "$tmp/bot/$f" ]] || die "File bot/$f kosong."
   bash -n "$tmp/bot/$f" 2>/dev/null || die "File bot/$f tidak valid (syntax error). Update dibatalkan."
+done
+for f in $EXTRA_FILES; do
+  fetch "extra/$f" "$tmp/extra/$f"
+  [[ -s "$tmp/extra/$f" ]] || die "File extra/$f kosong."
+  bash -n "$tmp/extra/$f" 2>/dev/null || die "File extra/$f tidak valid (syntax error). Update dibatalkan."
 done
 fetch update.sh "$tmp/update.sh"
 [[ -s "$tmp/update.sh" ]] && bash -n "$tmp/update.sh" 2>/dev/null || die "update.sh dari repo tidak valid."
@@ -70,6 +76,11 @@ mkdir -p "$LIB_DIR/bot/lib" "$LIB_DIR/bot/cmd" "$LIB_DIR/bot/handler" "$LIB_DIR/
 for f in $BOT_FILES; do
   chmod +x "$tmp/bot/$f"
   mv -f "$tmp/bot/$f" "$LIB_DIR/bot/$f"
+done
+mkdir -p "$LIB_DIR/extra"
+for f in $EXTRA_FILES; do
+  chmod +x "$tmp/extra/$f"
+  mv -f "$tmp/extra/$f" "$LIB_DIR/extra/$f"
 done
 # Migrasi dari struktur lama (bot.sh & telegram.sh dulu ada di folder utama)
 rm -f "$LIB_DIR/bot.sh" "$LIB_DIR/telegram.sh" "$LIB_DIR"/bot/lib/{actions,text,handler}.sh
