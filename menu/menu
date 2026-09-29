@@ -2,10 +2,11 @@
 . /usr/local/lib/xm/lib.sh
 L=/usr/local/lib/xm
 
+# ---------- submenu akun (VMess / VLESS / Trojan) ----------
 account_menu(){
   local p=$1
   while true; do
-    header "KELOLA AKUN ${p^^}"
+    header "MENU ${p^^}  |  $DOMAIN"
     echo " 1) Buat akun"
     echo " 2) Daftar akun"
     echo " 3) Lihat detail / link akun"
@@ -28,6 +29,7 @@ account_menu(){
   done
 }
 
+# ---------- fungsi utility ----------
 renew_ssl(){
   header "PERBARUI SSL"
   ~/.acme.sh/acme.sh --renew -d "$DOMAIN" --ecc --force && ok "SSL diperbarui." || err "Gagal memperbarui SSL."
@@ -40,31 +42,46 @@ restart_all(){
   pause
 }
 
+# ---------- submenu utility ----------
+utility_menu(){
+  while true; do
+    header "UTILITY  |  $DOMAIN"
+    echo " 1) Info server & layanan"
+    echo " 2) Hapus akun expired sekarang"
+    echo " 3) Perbarui SSL"
+    echo " 4) Restart layanan"
+    echo " 5) Ganti domain"
+    echo " 6) Bot Telegram"
+    echo " 7) Update script dari GitHub"
+    echo " 0) Kembali"
+    line; read -rp "Pilih: " c
+    case $c in
+      1) bash $L/info.sh ;;
+      2) bash $L/expire.sh; pause ;;
+      3) renew_ssl ;;
+      4) restart_all ;;
+      5) bash $L/domain.sh ;;
+      6) bash $L/bot/setup.sh ;;
+      7) bash $L/update.sh; pause ;;
+      0) return ;;
+    esac
+  done
+}
+
+# ---------- menu utama ----------
 while true; do
   header "XRAY MANAGER  |  $DOMAIN"
-  echo " 1) Kelola VLESS"
-  echo " 2) Kelola VMess"
-  echo " 3) Kelola Trojan"
-  echo " 4) Info server & layanan"
-  echo " 5) Hapus akun expired sekarang"
-  echo " 6) Perbarui SSL"
-  echo " 7) Restart layanan"
-  echo " 8) Ganti domain"
-  echo " 9) Bot Telegram"
-  echo "10) Update script dari GitHub"
+  echo " 1) VMess    (buat & kelola akun)"
+  echo " 2) VLESS    (buat & kelola akun)"
+  echo " 3) Trojan   (buat & kelola akun)"
+  echo " 4) Utility  (pengaturan lainnya)"
   echo " 0) Keluar"
   line; read -rp "Pilih: " c
   case $c in
-    1) account_menu vless ;;
-    2) account_menu vmess ;;
+    1) account_menu vmess ;;
+    2) account_menu vless ;;
     3) account_menu trojan ;;
-    4) bash $L/info.sh ;;
-    5) bash $L/expire.sh; pause ;;
-    6) renew_ssl ;;
-    7) restart_all ;;
-    8) bash $L/domain.sh ;;
-    9) bash $L/bot/setup.sh ;;
-    10) bash $L/update.sh; pause ;;
+    4) utility_menu ;;
     0) clear; exit 0 ;;
   esac
 done
