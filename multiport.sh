@@ -43,7 +43,21 @@ read -rp "Masukkan domain (contoh: vpn.domain.com): " DOMAIN
 # ---------- 1. Dependensi ----------
 step 1 "Memperbarui sistem & memasang dependensi..."
 export DEBIAN_FRONTEND=noninteractive
-apt-get update -y
+
+# Debian 10 (buster) sudah EOL: repo dipindah ke archive.debian.org
+if [[ "${ID:-}" == "debian" && "${VERSION_ID:-}" == "10" ]]; then
+  echo -e "${Y}Debian 10 terdeteksi (sudah EOL). Mengalihkan repo ke archive.debian.org...${N}"
+  echo -e "${Y}Saran: pakai Debian 11/12 atau Ubuntu 22.04 untuk keamanan lebih baik.${N}"
+  for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
+    [[ -f "$f" ]] || continue
+    sed -i -E 's#https?://(deb|security|ftp[.a-z]*)\.debian\.org/debian-security#http://archive.debian.org/debian-security#g;
+               s#https?://(deb|ftp[.a-z]*)\.debian\.org/debian#http://archive.debian.org/debian#g;
+               /buster-updates/d' "$f"
+  done
+  echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99xm-archive
+fi
+
+apt-get update -y || die "apt update gagal. Periksa repo/koneksi internet VPS."
 apt-get install -y nginx curl wget uuid-runtime jq ufw unzip socat cron psmisc openssl net-tools \
   || die "Gagal memasang dependensi."
 
