@@ -1,5 +1,5 @@
 #!/bin/bash
-# Menu pengaturan bot Telegram - dibuka dari menu utama nomor 9
+# Menu pengaturan bot Telegram - dibuka dari menu Utility → Bot Telegram
 # Struktur:  setup/config.sh  setup/service.sh  setup/test.sh  setup/notify.sh  setup/remove.sh
 . /usr/local/lib/xm/lib.sh
 SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/setup"
