@@ -1,0 +1,70 @@
+#!/bin/bash
+. /usr/local/lib/xm/lib.sh
+L=/usr/local/lib/xm
+
+account_menu(){
+  local p=$1
+  while true; do
+    header "KELOLA AKUN ${p^^}"
+    echo " 1) Buat akun"
+    echo " 2) Daftar akun"
+    echo " 3) Lihat detail / link akun"
+    echo " 4) Perpanjang akun"
+    echo " 5) Ubah limit IP & kuota"
+    echo " 6) Reset pemakaian / buka kunci"
+    echo " 7) Hapus akun"
+    echo " 0) Kembali"
+    line; read -rp "Pilih: " c
+    case $c in
+      1) bash $L/add.sh "$p" ;;
+      2) bash $L/list.sh "$p" ;;
+      3) bash $L/show.sh "$p" ;;
+      4) bash $L/renew.sh "$p" ;;
+      5) bash $L/limit.sh "$p" ;;
+      6) bash $L/reset.sh "$p" ;;
+      7) bash $L/del.sh "$p" ;;
+      0) return ;;
+    esac
+  done
+}
+
+renew_ssl(){
+  header "PERBARUI SSL"
+  ~/.acme.sh/acme.sh --renew -d "$DOMAIN" --ecc --force && ok "SSL diperbarui." || err "Gagal memperbarui SSL."
+  pause
+}
+
+restart_all(){
+  header "RESTART LAYANAN"
+  systemctl restart xray nginx && ok "Xray & Nginx di-restart." || err "Gagal restart."
+  pause
+}
+
+while true; do
+  header "XRAY MANAGER  |  $DOMAIN"
+  echo " 1) Kelola VLESS"
+  echo " 2) Kelola VMess"
+  echo " 3) Kelola Trojan"
+  echo " 4) Info server & layanan"
+  echo " 5) Hapus akun expired sekarang"
+  echo " 6) Perbarui SSL"
+  echo " 7) Restart layanan"
+  echo " 8) Ganti domain"
+  echo " 9) Bot Telegram"
+  echo "10) Update script dari GitHub"
+  echo " 0) Keluar"
+  line; read -rp "Pilih: " c
+  case $c in
+    1) account_menu vless ;;
+    2) account_menu vmess ;;
+    3) account_menu trojan ;;
+    4) bash $L/info.sh ;;
+    5) bash $L/expire.sh; pause ;;
+    6) renew_ssl ;;
+    7) restart_all ;;
+    8) bash $L/domain.sh ;;
+    9) bash $L/bot/setup.sh ;;
+    10) bash $L/update.sh; pause ;;
+    0) clear; exit 0 ;;
+  esac
+done
