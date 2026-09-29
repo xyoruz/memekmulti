@@ -16,6 +16,17 @@ wget -O multiport.sh https://raw.githubusercontent.com/xyoruz/memekmulti/main/mu
 
 Setelah selesai ketik `menu`.
 
+## Menu
+
+```
+1) VMess    -> buat akun, daftar, detail/link, perpanjang, limit, reset, hapus
+2) VLESS    -> (sama seperti VMess)
+3) Trojan   -> (sama seperti VMess)
+4) Utility  -> info server, hapus expired, perbarui SSL, restart layanan,
+               ganti domain, bot Telegram, update script
+0) Keluar
+```
+
 ## Update
 
 ```bash
@@ -57,7 +68,7 @@ menu/               menu & manajemen akun (VPS)
 └── info.sh         info server
 bot/                bot Telegram (service: xm-bot)
 ├── bot.sh          entry point & loop utama
-├── setup.sh        menu pengaturan bot (menu utama no. 9)
+├── setup.sh        menu pengaturan bot (menu Utility → Bot Telegram)
 ├── lib/            dasar
 │   ├── core.sh         config, API Telegram, kirim pesan, cek admin, lock
 │   ├── keyboard.sh     inline keyboard
@@ -88,9 +99,10 @@ Lokasi terpasang di VPS: `/usr/local/lib/xm/` (menu) dan `/usr/local/lib/xm/bot/
 ## Bot Telegram
 
 1. Buat bot di [@BotFather](https://t.me/BotFather), salin tokennya.
-2. Ketik `menu` → **9) Bot Telegram** (`bot/setup.sh`) → *Atur token & ID admin* → *Aktifkan bot*.
+2. Ketik `menu` → **4) Utility** → **6) Bot Telegram** (`bot/setup.sh`) → *Atur token & ID admin* → *Aktifkan bot*.
 3. Kirim `/start` ke bot. Kalau ID admin belum diatur, bot menampilkan ID kamu; isi ID itu di menu 1.
-4. Perintah: `/menu`, `/add`, `/del`, `/renew`, `/limit`, `/reset`, `/detail`, `/list`, `/info`, `/expire`, `/restart`, `/help`.
+4. Tombol `/menu`: VMess, VLESS, Trojan (daftar akun + tombol Buat Akun) dan Utility (info server, hapus expired, restart, bantuan).
+   Perintah: `/menu`, `/add`, `/del`, `/renew`, `/limit`, `/reset`, `/detail`, `/list`, `/info`, `/expire`, `/restart`, `/help`.
    Contoh: `/add vless budi 30 10 2` (30 hari, kuota 10 GB, 2 IP).
 5. Notifikasi otomatis ke admin saat akun terkunci (kuota/IP) atau dihapus karena expired (bisa dimatikan di menu).
 
